@@ -13,7 +13,8 @@ from src.config import (
     MAX_INPUT_CHARACTERS,
     MEDICAL_DISCLAIMER,
 )
-from src.medical_chatbot import answer_medical_question
+from src.language import detect_language_code
+from src.medical_chatbot import answer_medical_question, validate_question
 from src.model_registry import load_generation_pipeline, load_translation_pipeline
 
 
@@ -91,12 +92,20 @@ def render_chatbot() -> None:
         return
 
     try:
-        translator = get_translator(translation_model)
+        cleaned_question = validate_question(question, MAX_INPUT_CHARACTERS)
+        if language_code == "auto":
+            resolved_language_code = detect_language_code(cleaned_question)
+        else:
+            resolved_language_code = language_code
+        translator = None
+        if resolved_language_code != "en":
+            translator = get_translator(translation_model)
+
         generator = get_generator(generation_model)
         with st.spinner("Translating and generating a response..."):
             response = answer_medical_question(
-                question=question,
-                source_language_code=language_code,
+                question=cleaned_question,
+                source_language_code=resolved_language_code,
                 translator=translator,
                 generator=generator,
                 max_characters=MAX_INPUT_CHARACTERS,
