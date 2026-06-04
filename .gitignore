@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.env
+.venv/
+venv/
+
+# Data and model artifacts
+data/raw/
+data/processed/
+models/
+checkpoints/
+*.pt
+*.bin
+*.safetensors
+
+# Streamlit and OS files
+.streamlit/secrets.toml
+.DS_Store
